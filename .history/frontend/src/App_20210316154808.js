@@ -1,0 +1,26 @@
+import logo from './logo.svg';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import './App.css';
+
+function App() {
+  return (
+    <div>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/register" render={RegisterComponent} />
+                <Route exact path="/login" render={LoginComponent} />
+                <Route exact path="/places" render={PlacesComponent} />
+                <Route exact path="/places/:id" render={({match}) => 
+                    <PlaceComponent id={match.params.id} />} 
+                />
+                <Route exact path="/tags" render={TagsComponent} />
+                <Route exact path="/tags/:id" render={({match}) => 
+                    <TagComponent id={match.params.id} />} 
+                />
+            </Switch>
+        </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
