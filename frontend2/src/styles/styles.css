@@ -3,6 +3,49 @@
     cursor: pointer;
 }
 
+#place-address-dark {
+    color: #fff8;
+    cursor: pointer;
+}
+
 #place-address:hover {
     color: #f50057
+}
+
+#place-address-dark:hover {
+    color: #f50057
+}
+
+.bg-color-light {
+    background-color: white;
+}
+
+.bg-color-dark {
+    background-color: #111;
+}
+
+.bg-color-dark * {
+    color: white;
+}
+
+.primary-color {
+    color: #f50057!important;
+}
+
+.primary-color * {
+    color: #f50057!important;
+}
+
+.primary-icon-color * {
+    color: #f50057;
+}
+
+.dark-border-color * {
+    color: #f50057!important;
+    border-color: #f50057!important;
+    background-color: transparent;
+}
+
+.bg-1 {
+    background-color: "#0003!important"
 }

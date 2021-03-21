@@ -1,16 +1,20 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom';
 import { TextField, Select, MenuItem, InputLabel } from '@material-ui/core';
-import { FaMapMarker } from 'react-icons/fa';
+import { FaMapMarker, FaPlusCircle } from 'react-icons/fa';
 import StarRatings from 'react-star-ratings';
 import axios from 'axios';
+import styles from './../styles/styles.css';
+import { getUser } from '../utils/utils';
 
-export default function PlacesComponent() {
+export default function PlacesComponent() { 
     const [places, setPlaces] = useState([])
     const [tags, setTags] = useState([])
     const [search, setSearch] = useState("")
     const [searchedTags, setSearchedTags] = useState("")
     const [sortValue, setSortValue] = useState("")
+
+    const [user, setUser] = useState({})
 
     useEffect(() => {
         loadPlaces()
@@ -28,7 +32,7 @@ export default function PlacesComponent() {
         return str1.toLowerCase().includes(str2.toLowerCase())
     }
 
-    const loadPlaces = () => {
+    const loadPlaces = async () => {
         setTags([])
 
         axios.get(axios.defaults.baseURL + 'api/places').then(res => {
@@ -44,6 +48,8 @@ export default function PlacesComponent() {
                 })
             })
         })
+
+        setUser(await getUser())
     }
 
     const sortPlaces = async (e) => {
@@ -80,11 +86,22 @@ export default function PlacesComponent() {
                     fontFamily: 'sans-serif', 
                     fontWeight: 'bold'
                 }} 
-                className="my-5"
+                className="mt-5"
             >
                 PLACES
             </h1>
-            <div className="mx-auto mb-5" style={{textAlign: 'center'}}>
+            <div className="text-center mx-auto my-3 mb-4 primary-icon-color">
+                {
+                    localStorage.getItem('token') ?
+                    <Link to="/places/create">
+                        <FaPlusCircle size={30} color="#f50057" />
+                    </Link> : null
+                }
+            </div>
+            <div 
+                className={`mx-auto mb-5 ${user && user.isDarkModeOn ? "dark-border-color" : "none"}`} 
+                style={{textAlign: 'center'}}
+            >
                 <TextField 
                     variant="outlined" 
                     type="search" 
@@ -95,7 +112,7 @@ export default function PlacesComponent() {
                     placeholder="Search name or address"
                 />
             </div>
-            <div style={{justifyContent: 'center'}} className="mx-auto d-flex my-5">
+            <div style={{justifyContent: 'center'}} className={`mx-auto d-flex my-5 ${user && user.isDarkModeOn ? "dark-border-color" : "none"}`}>
                 <div>
                     <InputLabel id="sort-label"></InputLabel>
                     <Select
@@ -180,10 +197,10 @@ export default function PlacesComponent() {
                             className="p-3"
                         >
                             <Link style={{textDecoration: 'none', color: "#f50057"}} to={`places/${p._id}`}>
-                                <h4>{p.name}</h4>
-                                <div className="d-flex">
-                                    <FaMapMarker style={{marginRight: 12}} />
-                                    <p>{p.location}</p>
+                                <h4 className="primary-color">{p.name}</h4>
+                                <div className="d-flex primary-icon-color">
+                                    <FaMapMarker color="primary-color" style={{marginRight: 12}} />
+                                    <p className="primary-color">{p.location}</p>
                                 </div>
                             </Link>
                             <div 

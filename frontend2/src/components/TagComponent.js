@@ -70,7 +70,7 @@ export default function TagComponent(props) {
                         <div style={{flex: 3, flexWrap: 'wrap'}}>
                             <p>{tag.description}</p>
                             <h1 className="my-5">Places</h1>
-                            <div className="d-flex" style={{flexWrap: 'wrap', justifyContent: 'space-evenly'}}>
+                            <div className="d-flex primary-color" style={{flexWrap: 'wrap', justifyContent: 'space-evenly'}}>
                                 {
                                     places.map(p => (
                                         <Link 

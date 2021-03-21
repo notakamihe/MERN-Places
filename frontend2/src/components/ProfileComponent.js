@@ -1,13 +1,15 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useReducer} from 'react'
 import axios from "axios";
 import {getUser} from './../utils/utils'
 import moment from 'moment';
 import {Switch, InputLabel, TextField, FormControl} from '@material-ui/core'
 import { Button } from '@material-ui/core';
-import {useHistory} from 'react-router-dom'
+import {useHistory, useLocation} from 'react-router-dom'
+import styles from "./../styles/styles.css";
 
 export default function ProfileComponent() {
     const history = useHistory()
+    const location = useLocation()
 
     const [user, setUser] = useState({})
     const [name, setName] = useState("")
@@ -23,7 +25,11 @@ export default function ProfileComponent() {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
 
-    useEffect(async () => {
+    const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+
+    useEffect(async () => { 
+        forceUpdate()
+
         if (localStorage.getItem('token') == null)
             history.push("/login")
 
@@ -35,7 +41,7 @@ export default function ProfileComponent() {
         setAddress(u.address)
         setDob(u.dob)
         setIsDarkModeOn(u.isDarkModeOn)
-    }, [])
+    }, [location])
 
     const deleteUser = () => {
         if (window.confirm("Are you sure you want to delete your account?")) {
@@ -51,6 +57,7 @@ export default function ProfileComponent() {
     const logOut = () => {
         localStorage.removeItem('token')
         history.push("/login")
+        window.location.reload()
     }
 
     const updatePassword = (e) => {
@@ -289,35 +296,35 @@ export default function ProfileComponent() {
             </form>
             <div className="text-center mt-4">
                  <button 
-                    className="btn btn-light font-weight-bold text-primary" 
+                    className={`btn font-weight-bold text-primary ${user && user.isDarkModeOn ? "bg-1" : "btn-light"}`}
                     style={{fontSize: 15}}
                     onClick={() => setPasswordMode(true)}
                 >
                     Change password
                 </button>
                  <button 
-                    className="btn btn-light font-weight-bold" 
+                    className={`btn font-weight-bold ${user && user.isDarkModeOn ? "bg-1" : "btn-light"}`}
                     style={{fontSize: 15}}
                     onClick={() => setEditMode(true)}
                 >
                     Edit
                 </button>
                  <button 
-                    className="btn btn-light font-weight-bold text-danger" 
+                    className={`btn font-weight-bold text-danger ${user && user.isDarkModeOn ? "bg-1" : "btn-light"}`}
                     style={{fontSize: 15}}
                     onClick={() => deleteUser()}
                 >
                     Delete
                 </button>
                 <button
-                    className="btn btn-light font-weight-bold text-muted" 
+                    className={`btn font-weight-bold text-muted ${user && user.isDarkModeOn ? "bg-1" : "btn-light"}`} 
                     style={{fontSize: 15}}
                     onClick={() => logOut()}
                 >
                     Log out
                 </button>
             </div>
-            <form className={`mt-5 text-center mx-auto ${passwordMode ? "" : "d-none"}`} onSubmit={updatePassword}>
+            <form className={`mt-5 text-center mx-auto ${passwordMode ? "" : "d-none"} ${user && user.isDarkModeOn ? "dark-border-color" : ""}`} onSubmit={updatePassword}>
                 <div>
                     <TextField 
                         style={{flex: 0.6, fontSize: 16, textAlign: 'center'}} 

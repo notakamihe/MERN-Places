@@ -1,8 +1,9 @@
 import { Button } from '@material-ui/core'
 import { TextField } from '@material-ui/core'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
+import { getUser } from '../utils/utils'
 
 export default function CreateTagComponent() {
     const history = useHistory()
@@ -11,6 +12,15 @@ export default function CreateTagComponent() {
     const [description, setDescription] = useState("")
     const [image, setImage] = useState("")
     const [error, setError] = useState("")
+
+    const [user, setUser] = useState("")
+
+    useEffect(async () => {
+        if (localStorage.getItem('token') == null)
+            history.push("/login")
+
+        setUser(await getUser())
+    }, [])
 
     const createTag = (e) => {
         e.preventDefault()
@@ -58,7 +68,7 @@ export default function CreateTagComponent() {
                         backgroundImage: `url(${image ? window.URL.createObjectURL(image[0]) : ""})`
                     }}
                 >
-                    <div className="col-12">
+                    <div className={`col-12 ${user && user.isDarkModeOn ? "dark-border-color" : ""}`}>
                         <TextField 
                             className="col-12"
                             variant="outlined"
@@ -75,13 +85,13 @@ export default function CreateTagComponent() {
                         />
                     </div>
                 </div>
-                <div className="px-4 mt-4">
+                <div className={`px-4 mt-4 ${user && user.isDarkModeOn ? "dark-border-color" : ""}`}>
                     {error ? <p className="alert alert-danger col-10 text-center mt-4 mx-auto">{error}</p> : null}
-                    <div>
+                    <div className={`${user && user.isDarkModeOn ? "dark-border-color" : ""}`} color="secondary">
                         <label htmlFor="tagImg" className="d-block">Image</label>
                         <TextField id="tagImg" type="file" onChange={e => setImage(e.target.files)} />
                     </div>
-                    <div className="mt-5" >
+                    <div className={`mt-5 ${user && user.isDarkModeOn ? "dark-border-color" : ""}`} >
                         <label htmlFor="description" className="d-block">Description</label>
                         <TextField 
                             multiline 
@@ -96,7 +106,7 @@ export default function CreateTagComponent() {
                     <Button 
                         variant="outlined" 
                         color="secondary" 
-                        className="mt-5"
+                        className="primary-color mt-5"
                         type="submit"
                     >
                         Create

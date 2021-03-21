@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { TextField, Button, formatMs } from '@material-ui/core';
 import algoliasearch from 'algoliasearch/lite';
 import { InstantSearch } from 'react-instantsearch-dom';
@@ -6,6 +6,7 @@ import Places from './../utils/algolia/Places';
 import { FaMinus, FaPlus } from 'react-icons/fa';
 import axios from 'axios'
 import {useHistory} from 'react-router-dom';
+import { getUser } from '../utils/utils';
 
 export default function CreatePlaceComponent() {
     const history = useHistory()
@@ -16,6 +17,7 @@ export default function CreatePlaceComponent() {
     const [additionalFields, setAddtionalFields] = useState([])
     const [tags, setTags] = useState("")
     const [error, setError] = useState("")
+    const [user, setUser] = useState({})
 
     const [sunStartTime, setSunStartTime] = useState("")
     const [sunEndTime, setSunEndTime] = useState("")
@@ -36,6 +38,13 @@ export default function CreatePlaceComponent() {
         '9PRLIVT5PX',
         '6410375b80077c4b32fea46b1196322a'
     );
+
+    useEffect(async () => {
+        if (localStorage.getItem('token') == null)
+            history.push("/login")
+
+        setUser(await getUser())
+    }, [])
 
     const createPlace = (e) => {
         e.preventDefault()
@@ -134,7 +143,7 @@ export default function CreatePlaceComponent() {
     const DayRow = (props) => (
         <div className="d-flex align-items-center text-center mx-auto my-2" style={{justifyContent: "center"}}>
             <h5 
-                className="m-0 p-3 mx-5 rounded" 
+                className="m-0 p-3 mx-5 rounded bg-1" 
                 style={{backgroundColor: "#0003"}}
             >
                 {props.day}
@@ -203,7 +212,7 @@ export default function CreatePlaceComponent() {
     }
 
     return (
-        <div className="pt-5 px-5 mx-auto" style={{paddingBottom: 128}}>
+        <div className={ `pt-5 px-5 mx-auto ${user && user.isDarkModeOn ? "dark-border-color" : ""}`} style={{paddingBottom: 128}}>
             <h4 className="mx-auto text-center font-weight-bold text-muted">Create a place</h4>
             <form className="mx-auto col-10 mt-5" onSubmit={createPlace}>
                 <div className="col-12">

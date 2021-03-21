@@ -32,7 +32,7 @@ export default function PlaceComponent(props) {
     const [error, setError] = useState("")
 
     useEffect(async () => {
-        load(props.id) 
+        load(props.id, true) 
         setUser(await getUser())
     }, [])
     
@@ -61,7 +61,7 @@ export default function PlaceComponent(props) {
         })
 
         axios.put(axios.defaults.baseURL + `api/places/${place._id}`, newPlace).then(res => {
-            load(props.id)
+            load(props.id, false)
             setRating(3)
             setRatingMode(false)
         }).catch(err => {
@@ -69,7 +69,10 @@ export default function PlaceComponent(props) {
         })
     }
 
-    const load = (id) => {
+    const load = (id, scroll) => {
+        if (scroll)
+            window.scrollTo(0, 0)
+
         axios.get(axios.defaults.baseURL + `api/places/${id}`).then(res => {
             res.data.ratings.forEach(rating => {
                 if (rating.user) {
@@ -120,7 +123,7 @@ export default function PlaceComponent(props) {
         newPlace.ratings = newPlace.ratings.filter(r => r.user != id)
         
         axios.put(axios.defaults.baseURL + `api/places/${place._id}`, newPlace).then(res => {
-            load(props.id)
+            load(props.id, false)
         }).catch(err => {
             console.log(err);
         })
@@ -136,7 +139,10 @@ export default function PlaceComponent(props) {
                 <div className="d-flex" style={{margin: '64px auto'}}>
                     <div style={{flex: 4, flexWrap: 'wrap'}}>
                         <h1>{place.name}</h1>
-                        <h4 id="place-address" onClick={() => setShowMapModal(true)}>{place.location}</h4>
+                        <h4 
+                            id={`place-address${user && user.isDarkModeOn ? "-dark" : ""}`} 
+                            onClick={() => setShowMapModal(true)}>{place.location}
+                        </h4>
                         {
                             place.averageRating != null ?
 
@@ -287,8 +293,7 @@ export default function PlaceComponent(props) {
                                                         border: "1px solid #f50057", 
                                                         minHeight: 300, 
                                                         textAlign: 'center',
-                                                        padding: 8,
-                                                        backgroundColor: "#fff"
+                                                        padding: 8
                                                     }}
                                                 >
                                                     <div className="mt-4">
@@ -336,7 +341,7 @@ export default function PlaceComponent(props) {
                                     variant="outlined"
                                     startIcon={<FaPlus />}
                                     style={{borderRadius: 25}}
-                                    className={`${ratingMode ? "d-none" : ""}`}
+                                    className={`primary-color ${ratingMode ? "d-none" : ""}`}
                                     onClick={() => setRatingMode(true)}
                                 >
                                     Add a rating
@@ -380,7 +385,7 @@ export default function PlaceComponent(props) {
                                             changeRating={(newRating, name) => setRating(newRating)}
                                         />
                                     </div>
-                                    <div className="mt-4">
+                                    <div className={`mt-4 primary-color ${user && user.isDarkModeOn ? "primary-color" : ""}`}>
                                         <TextField 
                                             multiline
                                             className="col-12"
@@ -484,11 +489,14 @@ export default function PlaceComponent(props) {
                                                 <Link 
                                                     style={{textDecoration: 'none', color: "#f50057"}} 
                                                     to={`/places/${op._id}`}
-                                                    onClick={() => load(op._id)}
+                                                    onClick={() => load(op._id, true)}
+                                                    className="primary-color"
                                                 >
                                                     <h4>{op.name}</h4>
                                                     <div className="d-flex">
-                                                        <FaMapMarker style={{marginRight: 12}} />
+                                                        <div>
+                                                            <FaMapMarker style={{marginRight: 12}} />
+                                                        </div>
                                                         <p>{op.location}</p>
                                                     </div>
                                                 </Link>

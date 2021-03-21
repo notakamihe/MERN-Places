@@ -26,6 +26,7 @@ export default function LoginComponent() {
         }).then(res => {
             localStorage.setItem('token', res.data.token)
             history.push("/profile")
+            window.location.reload()
         }).catch(err => {
             console.log(err);
 

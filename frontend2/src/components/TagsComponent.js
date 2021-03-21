@@ -2,15 +2,17 @@ import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom';
 import { IconButton, TextField, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { SearchOutlined } from '@material-ui/icons';
-import { FaMapMarker } from 'react-icons/fa';
+import { FaMapMarker, FaPlusCircle } from 'react-icons/fa';
 import StarRatings from 'react-star-ratings';
 import axios from 'axios';
+import { getUser } from '../utils/utils';
 
 
 export default function TagsComponent() {
     const [tags, setTags] = useState([])
     const [search, setSearch] = useState("")
     const [sortValue, setSortValue] = useState("")
+    const [user, setUser] = useState({})
 
     useEffect(() => {
         loadTags()
@@ -18,10 +20,12 @@ export default function TagsComponent() {
 
     console.log(tags);
 
-    const loadTags = () => {
+    const loadTags = async () => {
         axios.get(axios.defaults.baseURL + 'api/tags').then(res => {
             setTags(res.data)
         })
+
+        setUser(await getUser())
     }
 
     const sortTags = (e) => {
@@ -55,11 +59,19 @@ export default function TagsComponent() {
                     fontFamily: 'sans-serif', 
                     fontWeight: 'bold'
                 }} 
-                className="my-5"
+                className="mt-5 mb-3"
             >
                 TAGS
             </h1>
-            <div className="mx-auto mb-5" style={{textAlign: 'center'}}>
+            <div className="text-center mx-auto my-3 mb-4">
+                {
+                    localStorage.getItem('token') ?
+                    <Link to="/tags/create" className="primary-color">
+                        <FaPlusCircle size={30} color="#f50057" />
+                    </Link> : null
+                }
+            </div>
+            <div className={`mx-auto mb-5 ${user && user.isDarkModeOn ? "dark-border-color" : ""}`} style={{textAlign: 'center'}}>
                 <TextField 
                     variant="outlined" 
                     type="search" 
@@ -70,7 +82,7 @@ export default function TagsComponent() {
                     value={search}
                 />
             </div>
-            <div style={{justifyContent: 'center'}} className="mx-auto d-flex my-5">
+            <div style={{justifyContent: 'center'}} className={`mx-auto d-flex my-5 ${user && user.isDarkModeOn ? "dark-border-color" : ""}`}>
                 <div>
                     <InputLabel id="sort-label"></InputLabel>
                     <Select
@@ -90,7 +102,7 @@ export default function TagsComponent() {
                     </Select>
                 </div>
             </div>
-            <div className="d-flex px-5" style={{justifyContent: 'center', flexWrap: 'wrap'}}>
+            <div className={`d-flex px-5 ${user && user.isDarkModeOn ? "primary-color" : ""}`} style={{justifyContent: 'center', flexWrap: 'wrap'}}>
                 {
                     tags.filter(t => t.name.toLowerCase().includes(search.toLowerCase())).map(t => (
                         <Link 
